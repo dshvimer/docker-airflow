@@ -12,13 +12,19 @@ services:
       - '5432:5432'
 
   webserver:
-    image: puckel/docker-airflow:1.10.4
+    # image: puckel/docker-airflow:1.10.4
+    image: dshvimer/airflow-k8s
     restart: always
     depends_on:
       - postgres
     environment:
       - LOAD_EX=n
       - EXECUTOR=Local
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow
+      - POSTGRES_DB=airflow
+      - POSTGRES_PORT=5432
+
     volumes:
       - ./dags:/usr/local/airflow/dags
       # Uncomment to include custom plugins
@@ -28,3 +34,6 @@ services:
     command: webserver
     labels:
       kompose.service.type: nodeport
+# kubectl run -i --tty --rm debug --image=postgres:9.6 --restart=Never -- bash
+# docker build -t airflow/k8s .
+
